@@ -2,13 +2,13 @@ package org.usfirst.frc.team6880.robot.task;
 
 import org.usfirst.frc.team6880.robot.FRCRobot;
 
-public class TaskTurnLeft90deg implements RobotTask {
+public class TaskSpinCCW90deg implements RobotTask {
 	FRCRobot robot;
 	double endDirection;
 	double currentDirection;
 	boolean wrapNegYaw;
 	
-	public TaskTurnLeft90deg(FRCRobot robot) 
+	public TaskSpinCCW90deg(FRCRobot robot) 
 	{
 		this.robot = robot;
 	}
@@ -16,27 +16,16 @@ public class TaskTurnLeft90deg implements RobotTask {
 	public void initTask()
 	{
 		//Calculate the end direction
-		endDirection = robot.navigation.gyro.getYaw() + 90.0;
-		//If the end direction is above 180, we need to take the negative yaw values and wrap them to positive
-		if (endDirection > 180.0)
-		{
-			wrapNegYaw = true;
-		}
-		else
-		{
-			wrapNegYaw = false;
-		}
+		endDirection = Math.IEEEremainder(robot.navigation.gyro.getYaw() - 90.0, 360);
+
 		//Start turning at half speed
 		robot.driveSys.arcadeDrive(0.5, -1.0);
 	}
 	
 	public boolean runTask()
 	{
-		//Store current direction to minimize method calls
-		currentDirection = robot.navigation.gyro.getYaw();
 		//If robot hasn't turned 90 deg
-		if ((wrapNegYaw && currentDirection < 0 ? currentDirection + 360 : currentDirection) < endDirection)
-		{
+		if (Math.IEEEremainder(endDirection - robot.navigation.gyro.getYaw(), 360) < 0)		{
 			//Keep on turning by leaving motors at their current values
 			return false;
 		}

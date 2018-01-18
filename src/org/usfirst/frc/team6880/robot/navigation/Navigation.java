@@ -16,4 +16,7 @@ public class Navigation {
 	{
 		robot.driveSys.arcadeDrive(speed, GYRO_KP * (gyro.getYaw() - direction));
 	}
+	
+	//TODO: Coordinate System?
+	//TODO: Computer Vision?
 }

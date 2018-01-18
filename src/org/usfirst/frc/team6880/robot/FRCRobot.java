@@ -10,19 +10,14 @@ public class FRCRobot {
 	public Navigation navigation;
 	
 	RobotTask curTask;
-	RobotTask tasks [] = {new TaskMoveForward20m(this),
-						  new TaskTurnLeft90deg(this),
-						  new TaskMoveForward20m(this),
-						  new TaskTurnLeft90deg(this),
-						  new TaskMoveForward20m(this),
-						  new TaskTurnLeft90deg(this),
-						  new TaskMoveForward20m(this)};
+	RobotTask tasks [] = {new TaskMoveForward20m(this)};
 	int taskNum;
+	boolean tasksDone;
 	
 	public FRCRobot(Robot wpilibrobot)
 	{
 		this.wpilibrobot = wpilibrobot;
-		driveSys = new DriveSystem(this);
+		this.driveSys = new DriveSystem(this);
 	}
 	
 	public void runTeleOp()
@@ -33,19 +28,33 @@ public class FRCRobot {
 	
 	public void initAutonomous()
 	{
+		//Resent encoders
+		driveSys.resetEncoders();
 		//Start with first task
 		curTask = tasks[0];
 		taskNum = 0;
+		tasksDone = false;
 	}
 	
 	public void runAutonomous()
 	{
 		//Run the current task. If current task ended
-		if(curTask.runTask())
+		if (!tasksDone && curTask.runTask())
 		{
-			//Go to next state
-			curTask = tasks[++taskNum];
-			curTask.initTask();
+			//If there are still tasks to run
+			if (taskNum + 1 < tasks.length)
+			{
+				System.out.println("Finished running task number " + taskNum);
+				//Go to next task
+				curTask = tasks[++taskNum];
+				//Begin the next task
+				curTask.initTask();
+			}
+			else
+			{
+				tasksDone = true;
+				System.out.println("Robot has finished running the autonomous tasks");
+			}
 		}
 	}
 		
